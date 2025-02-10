@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Restaurante Iraku - Especialistas en Ramen, Fast Food y Gourmet">
+    <title>Iraku - Especialistas en Ramen, Fast Food y Gourmet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .categoria-header {
+            text-align: center;
+            background: linear-gradient(135deg, #ff6f61, #de1b1b);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 800px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .producto img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .producto {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            max-width: 250px;
+            margin: 0 auto;
+        }
+
+        .producto:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .grid-productos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .precio {
+            font-weight: bold;
+            color: #ff5722;
+            font-size: 1.2rem;
+        }
+
+        button {
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #de1b1b;
+        }
+
+        .menu-categorias {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .menu-categorias button {
+            background-color: #de1b1b;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-categorias button:hover {
+            background-color: #ff6f61;
+        }
+
+        .carrito {
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        .carrito ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .carrito li {
+            padding: 5px 0;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-categorias">
+        <button onclick="cambiarCategoria('ramen')">Ramen</button>
+        <button onclick="cambiarCategoria('comida-rapida')">Comida Rápida</button>
+        <button onclick="cambiarCategoria('parrillada')">Parrillada</button>
+    </div>
+
+    <section id="ramen" class="categoria">
+        <div class="categoria-header">
+            <h2>Ramen</h2>
+            <p>Auténtico ramen japonés preparado con ingredientes premium</p>
+        </div>
+        <div class="grid-productos" id="productos-container"></div>
+    </section>
+
+    <section id="comida-rapida" class="categoria" style="display:none;">
+        <div class="categoria-header">
+            <h2>Comida Rápida</h2>
+            <p>Deliciosas opciones de comida rápida para disfrutar en cualquier momento</p>
+        </div>
+        <div class="grid-productos" id="productos-rapidos"></div>
+    </section>
+
+    <section id="parrillada" class="categoria" style="display:none;">
+        <div class="categoria-header">
+            <h2>Parrillada</h2>
+            <p>Exquisitas parrilladas para compartir con amigos y familia</p>
+        </div>
+        <div class="grid-productos" id="productos-parrillada"></div>
+    </section>
+
+    <div class="carrito" id="carrito">
+        <h3>Carrito de Compras</h3>
+        <ul id="carrito-lista"></ul>
+        <button onclick="realizarCompra()">Realizar compra</button>
+    </div>
+
+    <script>
+        const platosRamen = [
+            "Tonkotsu Ramen", "Miso Ramen", "Shoyu Ramen", "Spicy Ramen", "Veggie Ramen"
+        ];
+        
+        const platosComidaRapida = [
+            "Karaage Don", "Tempura Udon", "Sukiyaki", "Takoyaki", "Okonomiyaki"
+        ];
+        
+        const platosParrillada = [
+            "Costillas a la parrilla", "Chorizo parrillero", "Mini Parrillada", "Asado de tira"
+        ];
+
+        const containerRamen = document.getElementById('productos-container');
+        const containerComidaRapida = document.getElementById('productos-rapidos');
+        const containerParrillada = document.getElementById('productos-parrillada');
+        const carritoLista = document.getElementById('carrito-lista');
+
+        let carrito = [];
+
+        function cambiarCategoria(categoria) {
+            document.querySelectorAll('.categoria').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            if (categoria === 'ramen') {
+                document.getElementById('ramen').style.display = 'block';
+                mostrarProductos(platosRamen, containerRamen);
+            } else if (categoria === 'comida-rapida') {
+                document.getElementById('comida-rapida').style.display = 'block';
+                mostrarProductos(platosComidaRapida, containerComidaRapida);
+            } else if (categoria === 'parrillada') {
+                document.getElementById('parrillada').style.display = 'block';
+                mostrarProductos(platosParrillada, containerParrillada);
+            }
+        }
+
+        function mostrarProductos(platos, container) {
+            container.innerHTML = '';
+            platos.forEach((plato, index) => {
+                const imageUrl = `https://source.unsplash.com/200x150/?japanese-food&sig=${index}`; // Imagen más genérica
+                
+                const productoHTML = `
+                    <div class="producto">
+                        <img src="${imageUrl}" alt="Imagen de ${plato}">
+                        <h3>${plato}</h3>
+                        <p>Delicioso ${plato} con ingredientes auténticos.</p>
+                        <p class="precio">$${(Math.random() * 10 + 10).toFixed(2)}</p>
+                        <button onclick="agregarAlCarrito('${plato}')">Agregar al carrito</button>
+                    </div>
+                `;
+                container.innerHTML += productoHTML;
+            });
+        }
+
+        function agregarAlCarrito(plato) {
+            carrito.push(plato);
+            actualizarCarrito();
+        }
+
+        function actualizarCarrito() {
+            carritoLista.innerHTML = '';
+            carrito.forEach((item, index) => {
+                carritoLista.innerHTML += `<li>${item}</li>`;
+            });
+        }
+
+        function realizarCompra() {
+            if (carrito.length > 0) {
+                alert(`¡Gracias por tu compra! Has adquirido: ${carrito.join(', ')}`);
+                carrito = [];
+                actualizarCarrito();
+            } else {
+                alert('El carrito está vacío');
+            }
+        }
+
+        cambiarCategoria('ramen'); // Mostrar la categoría Ramen al cargar la página
+    </script>
+</body>
+</html>
